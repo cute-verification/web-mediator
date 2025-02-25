@@ -2,18 +2,17 @@ package io.github.gdrfgdrf.cuteverification.web.mediator.event.user
 
 import io.github.gdrfgdrf.cuteverification.web.mediator.event.BaseEvent
 import io.github.gdrfgdrf.cuteverification.web.mediator.event.bus.EventCompanion
+import io.github.gdrfgdrf.cuteverification.web.mediator.user.IUser
 
 abstract class UserLoginEvent(
-    val username: String,
-    val code: String,
-    val ip: String
+    val user: IUser
 ) : BaseEvent() {
 
-    class Failed(username: String, code: String, ip: String) : UserLoginEvent(username, code, ip) {
+    class Failed(user: IUser) : UserLoginEvent(user) {
         companion object : EventCompanion<Failed>()
     }
 
-    class Success(val id: String, username: String, code: String, ip: String) : UserLoginEvent(username, code, ip) {
+    class Success(user: IUser) : UserLoginEvent(user) {
         companion object : EventCompanion<Success>()
     }
 

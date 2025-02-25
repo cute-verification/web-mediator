@@ -17,10 +17,8 @@ object UserLoginSuccessEventListener {
 
     @Subscribe
     fun userLoginSuccess(userLoginSuccessEvent: UserLoginEvent.Success) {
-        val id = userLoginSuccessEvent.id
-        val username = userLoginSuccessEvent.username
-        val code = userLoginSuccessEvent.code
-        val ip = userLoginSuccessEvent.ip
+        val user = userLoginSuccessEvent.user
+        val id = user.id ?: throw IllegalArgumentException("user id is null")
 
         UserService.instance().userRestricted(id)
             .defaultSubscribe()
@@ -28,11 +26,11 @@ object UserLoginSuccessEventListener {
                 apiResult.ifSuccess {
                     val restricted = UserRestrictedParser.parse(apiResult)
                     if (restricted) {
-                        UserRestrictedEvent.main(id, username, code, ip).post()
+                        UserRestrictedEvent.main(user).post()
                     }
                 }
                 if (!apiResult.success()) {
-                    GetUserRestrictedErrorEvent.main(id, username, code, ip).post()
+                    GetUserRestrictedErrorEvent.main(user).post()
                 }
             })
     }

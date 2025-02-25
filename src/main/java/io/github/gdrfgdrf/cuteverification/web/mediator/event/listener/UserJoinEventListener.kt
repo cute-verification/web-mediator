@@ -16,24 +16,27 @@ object UserJoinEventListener {
 
     @Subscribe
     fun userJoin(userJoinEvent: UserJoinEvent) {
-        val username = userJoinEvent.username
-        val code = userJoinEvent.code
-        val ip = userJoinEvent.ip
+        val user = userJoinEvent.user
+        val username = user.username
+        val code = user.code
+        val ip = user.ip
 
         UserService.instance().userLogin(username, code, ip)
             .defaultSubscribe()
             .subscribe(HttpObserver.Builder()
                 .error {
-                    UserLoginEvent.Failed.main(username, code, ip).post()
+                    UserLoginEvent.Failed.main(user).post()
                 }
                 .finish { apiResult ->
                     apiResult.ifSuccess {
                         val userId = UserLoginIdParser.parse(apiResult)
-                        UserLoginEvent.Success.main(userId, username, code, ip).post()
+                        user.id = userId
+
+                        UserLoginEvent.Success.main(user).post()
                         return@ifSuccess
                     }
                     if (!apiResult.success()) {
-                        UserLoginEvent.Failed.main(username, code, ip).post()
+                        UserLoginEvent.Failed.main(user).post()
                     }
                 }
                 .build())
