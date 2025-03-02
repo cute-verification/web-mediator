@@ -1,5 +1,6 @@
 package io.github.gdrfgdrf.cuteverification.web.mediator.network.service
 
+import io.github.gdrfgdrf.cuteverification.web.mediator.enums.IdentificationPlatforms
 import io.github.gdrfgdrf.cuteverification.web.mediator.network.result.ApiResult
 import io.reactivex.rxjava3.core.Observable
 import retrofit2.http.GET
@@ -11,6 +12,7 @@ interface UserService {
     fun userLogin(
         @Query("username") username: String,
         @Query("code") code: String,
+        @Query("platform") platform: IdentificationPlatforms,
         @Query("ip") ip: String
     ): Observable<ApiResult>
 

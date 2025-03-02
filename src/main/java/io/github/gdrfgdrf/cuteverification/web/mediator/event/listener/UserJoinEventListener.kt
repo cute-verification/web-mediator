@@ -19,9 +19,10 @@ object UserJoinEventListener {
         val user = userJoinEvent.user
         val username = user.username
         val code = user.code
+        val platform = user.platform
         val ip = user.ip
 
-        UserService.instance().userLogin(username, code, ip)
+        UserService.instance().userLogin(username, code, platform, ip)
             .defaultSubscribe()
             .subscribe(HttpObserver.Builder()
                 .error {
