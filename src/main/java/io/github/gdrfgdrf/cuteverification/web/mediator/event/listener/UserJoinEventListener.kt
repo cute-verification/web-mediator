@@ -31,8 +31,6 @@ object UserJoinEventListener {
                     UserLoginEvent.Failed.main(user).post()
                 }
                 .finish { apiResult ->
-                    println(apiResult.code)
-
                     apiResult.ifSuccess {
                         val userId = UserLoginIdParser.parse(apiResult)
                         user.id = userId
