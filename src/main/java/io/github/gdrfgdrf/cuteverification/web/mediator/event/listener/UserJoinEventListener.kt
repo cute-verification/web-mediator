@@ -8,6 +8,7 @@ import io.github.gdrfgdrf.cuteverification.web.mediator.network.HttpObserver
 import io.github.gdrfgdrf.cuteverification.web.mediator.network.result.parser.UserLoginIdParser
 import io.github.gdrfgdrf.cuteverification.web.mediator.network.service.UserService
 import io.github.gdrfgdrf.cuteverification.web.mediator.rxjava.defaultSubscribe
+import io.github.gdrfgdrf.cuteverification.web.mediator.user.UserLoginDTO
 
 object UserJoinEventListener {
     init {
@@ -22,13 +23,16 @@ object UserJoinEventListener {
         val platform = user.platform
         val ip = user.ip
 
-        UserService.instance().userLogin(username, code, platform, ip)
+        val userLoginDto = UserLoginDTO(username, code, platform, ip)
+        UserService.instance().userLogin(userLoginDto)
             .defaultSubscribe()
             .subscribe(HttpObserver.Builder()
                 .error {
                     UserLoginEvent.Failed.main(user).post()
                 }
                 .finish { apiResult ->
+                    println(apiResult.code)
+
                     apiResult.ifSuccess {
                         val userId = UserLoginIdParser.parse(apiResult)
                         user.id = userId
